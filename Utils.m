@@ -1,4 +1,4 @@
-classdef helpers
+classdef Utils
     methods (Static)
 
         function plotClass(Class)

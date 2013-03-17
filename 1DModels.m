@@ -1,10 +1,10 @@
 %Model Estimation 1-D
 
-classdef Utils1D
+classdef 1DModels
     methods (Static)
 
-		%Parametric Estimation
-		%---------------------
+		% Parametric Estimation
+		% ---------------------
 
 		function [mu, varr] = gaussEst(data, dmu, dvar)
 			% Gaussian ML estimation
@@ -53,10 +53,10 @@ classdef Utils1D
 		end
 
 
-		%Non-Parametric Estimation
-		%-------------------------
+		% Non-Parametric Estimation
+		% -------------------------
 
-		function [x, pdf] = parzen1(data, sigma, res, buff)
+		function [x, pdf] = parzen1Est(data, sigma, res, buff)
 			% Calculates the gaussian parzen window PDF for a given data set
 			% --
 			% data = data set

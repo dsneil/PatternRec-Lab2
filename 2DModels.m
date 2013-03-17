@@ -1,6 +1,6 @@
 %Model Estimation 2-D
 
-classdef Utils2D
+classdef 2DModels
     methods (Static)
 
 		% Parametric Estimation
@@ -55,7 +55,7 @@ classdef Utils2D
 		% Non-Parametric Estimation
 		% -------------------------
 
-		function [x, pdf] = parzen1(data, sigma, res, buff)
+		function [x, pdf] = parzen2Est(data, sigma, res, buff)
 			% Calculates the gaussian parzen window PDF for a given data set
 			% --
 			% data = data set
