@@ -1,5 +1,7 @@
 classdef classData
     properties
+        a
+        b
         Mean
         Var
         Cov
