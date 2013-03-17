@@ -1,6 +1,7 @@
 classdef classData
     properties
         Mean
+        Var
         Cov
         Colour
         Cluster
@@ -8,9 +9,6 @@ classdef classData
     end
     methods
         function obj = classData(data, colour)
-            obj.Mean = [];
-            obj.Cov = [];
-            obj.InvCov = [];
             obj.Colour = colour;
             obj.Cluster = data;
         end

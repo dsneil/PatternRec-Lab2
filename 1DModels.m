@@ -6,29 +6,19 @@ classdef 1DModels
 		% Parametric Estimation
 		% ---------------------
 
-		function [mu, varr] = gaussEst(data, dmu, dvar)
+		function [mu, varr] = gaussEst(class)
 			% Gaussian ML estimation
 			% --
 			% dmu, dvar = mu, var. set to -1 if unknown
-			% data = data set for evaulation
-			% 
-			% Derivation in notes
+			% class = classData used for estimating mean and var
+
+			class.Mean = Utils.learnMean(class);
+			class.Var = Utils.learnVariance(class);
 
 			if (dmu == -1)
 				mu = ((1/length(data))*sum(data));
 			else
 				mu = dmu;
-			end
-
-			if (dvar == -1)
-				temp = 0;
-				for k=1:length(data),
-					temp = temp + (data(k)-mu)^2;
-				end
-
-				varr = ((1/length(data))*temp);
-			else
-				varr = dvar;
 			end
 		end
 

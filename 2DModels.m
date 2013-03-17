@@ -17,7 +17,8 @@ classdef 2DModels
 
 			% learn the mean and covariance of the clusters
 			for c=1:length(cs)
-				[cs(c).Mean, cs(c).Cov] = estMuCov(cs(c));
+				cs(c).Mean = Utils.learnMean(cs(c));
+				cs(c).Cov = Utils.learnCovariance(cs(c));
 				cs(c).InvCov = inv(cs(c).Cov)
 			end
 
@@ -33,23 +34,6 @@ classdef 2DModels
 					varargin(2), ...
 					varargin(3), ...
 				);
-		end
-
-		function [mu, cov] = estMuCov(class)
-			if (class.Mean == 0)
-				mu = ((1/length(data))*sum(data));
-			else
-				mu = class.Mean;
-
-			if (class.Cov == 0)
-				temp = 0;
-				for k=1:length(data),
-					temp = temp + (data(k)-mu)*(data(k)-mu)';
-				end
-
-				cov = ((1/length(data))*temp);
-			else
-				cov = class.Cov;
 		end
 
 		% Non-Parametric Estimation

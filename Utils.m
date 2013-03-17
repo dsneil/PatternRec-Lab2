@@ -50,6 +50,53 @@ classdef Utils
             pC = 2*log(pRatio) + log(det(ci.Cov)/det(cj.Cov));
         end
 
+
+        function mu = learnMean(class)
+            % Learns the mean of a data set
+
+            if (isempty(class.Mean) == 1)
+                mu = ((1/length(data))*sum(data));
+            else
+                mu = class.Mean;
+        end
+
+        function var = learnVariance(class)
+            % Learns the variance of a data set
+
+            % if undetermined, learn the mean
+            if (isempty(class.Mean) == 1)
+                learnMean(class);
+
+            if (isempty(class.Var) == 1)
+                temp = 0;
+                for k=1:length(data),
+                    temp = temp + (data(k)-class.Mean)^2;
+                end
+
+                varr = ((1/length(data))*temp);
+            else
+                varr = dvar;
+            end
+        end
+
+        function cov = learnCovariance(class)
+            % Learns the covariance matrix of a data set
+
+            % if undetermined, learn the mean
+            if (isempty(class.Mean) == 1)
+                learnMean(class);
+
+            if (isempty(class.Cov) == 1)
+                temp = 0;
+                for k=1:length(data),
+                    temp = temp + (data(k)-class.Mean)*(data(k)-class.Mean)';
+                end
+
+                cov = ((1/length(data))*temp);
+            else
+                cov = class.Cov;
+        end
+
         function MLClassification(color, xVals, yVals, testPts, cont, c1, c2, c3) 
             % -Creates a 3 class ML decision boundary
             % -Same implementation as MAP, but priors equal. Could be used for
