@@ -1,6 +1,6 @@
 %Model Estimation 1-D
 
-classdef 1DModels
+classdef Models1D
     methods (Static)
 
 		% Parametric Estimation
@@ -59,6 +59,7 @@ classdef 1DModels
 				temp = 0;
 				for v=1:length(data),
 					temp = temp + exp((-1/2)*(((x(k)-data(v))'*(x(k)-data(v)))/sigma^2));
+					% try using the dot operator after
 				end
 				wind =[wind temp];
 			end	
