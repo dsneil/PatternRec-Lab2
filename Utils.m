@@ -60,6 +60,15 @@ classdef Utils
             func = func./sum(func(:)); % normalizes the function
         end
 
+        function prob = gauss2D(class, pt)
+            % prob = transFunc(pt, class.Mean, class.InvCov)+log(det(class.Cov));
+            % (pt-class.Mean)*(pt-class.Mean)'/det(class.Cov))
+            % may need to change to covariance
+            trans = (pt - class.Mean)*class.InvCov*(pt - class.Mean)';
+            expo = exp((-1/2)*(trans));
+            prob = (1/(det(class.Cov)*sqrt(2*pi)))*expo;
+        end
+
         function mu = learnMean(class)
             % Learns the mean of a data set
             mu = ((1/length(class.Cluster))*sum(class.Cluster));
@@ -112,27 +121,15 @@ classdef Utils
             %        Will be a matrix based on classification of points.
             % c1, c2, c3 = training data clusters to create boundary.
 
-            function trans = transFunc(pt, mean, invcov)
-                trans = (pt - mean)*invcov*(pt - mean)';
-            end
-
-            function prob = MLprob(class, pt)
-                % prob = transFunc(pt, class.Mean, class.InvCov)+log(det(class.Cov));
-                % (pt-class.Mean)*(pt-class.Mean)'/det(class.Cov))
-                % may need to change to covariance
-                expo = exp((-1/2)*(transFunc(pt, class.Mean, class.InvCov)));
-                prob = (1/(det(class.Cov)*sqrt(2*pi)))*expo;
-            end
-
             xIndex = 1; yIndex = 1;
             numXs = length(xVals);
             
             for k = 1: length(testPts(:,1))
                 pt = testPts(k,:);
 
-                probc1 = MLprob(c1, pt);
-                probc2 = MLprob(c2, pt);
-                probc3 = MLprob(c3, pt);
+                probc1 = Utils.gauss2D(c1, pt);
+                probc2 = Utils.gauss2D(c2, pt);
+                probc3 = Utils.gauss2D(c3, pt);
                 vals = [probc1 probc2 probc3];
                 [~, ind] = max(vals);
 
@@ -167,7 +164,7 @@ classdef Utils
             [c, h] = contour(xVals, yVals, cont, 3, colour);
         end
 
-        function finCont = MEDClassifier(colour, xVals, yVals, testPts, cont, varargin)
+        function finCont = MEDClassifier(colour, xVals, yVals, testPts, cont, plotFlag, varargin)
             % Minimum Euclidian Distance classifier.
             % --
             % colour = colour of decision boundary
@@ -198,7 +195,9 @@ classdef Utils
             end 
             
             finCont = cont';
-            [c, h] = contour(xVals,yVals, cont', 2, colour);
+            if(plotFlag)
+                [c, h] = contour(xVals,yVals, cont', 2, colour);
+            end
             %ch = get(h,'child'); alpha(ch,0.05);
             
         end

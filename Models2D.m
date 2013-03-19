@@ -22,7 +22,7 @@ classdef Models2D
 		% Non-Parametric Estimation
 		% -------------------------
 
-		function [ind, cont, pdfs, xVs] = parzen2Est(stepSize, varargin)
+		function [ind, cont, pdfs, xVs] = parzen2Est(stepSize, windSize, windVar, varargin)
 			% Calculates the gaussian parzen window PDF for a given data set
 			% --
 			% data = data set
@@ -37,7 +37,8 @@ classdef Models2D
 
 			% creates a 50x50 gaussian window with variance 400 
 			%fspecial('gaussian', [50 50], sqrt(400));
-			gaussWindow = Utils.gaussian2d(100, 5, 400);
+			gaussWindow = fspecial('gaussian', [windSize windSize], sqrt(windVar));
+			% gaussWindow = Utils.gaussian2d(100, 5, 400);
 
 			% Generate each of the pdf's over defined range
 			pdfs = []; xVs = []; yVs = [];
@@ -53,9 +54,9 @@ classdef Models2D
 		function seqContour = seqClassifier(stepSize, cA, cB)
 			[xVals, yVals, testPts, cont] = Utils.createGrid(stepSize, cA, cB);
 
-			pA = cA.Cluster; pB = cB.Cluster;
-			protoA = []; protoB = [];
-			seqContour = zeros(length(xVals), length(yVals));
+			pA = cA.Cluster; pB = cB.Cluster; protoA = []; protoB = [];
+			confAs = []; confBs = [];
+			seqContour = zeros(length(yVals), length(xVals));
 			iter = 0;
 
 			while(length(pA) > 0 && length(pB) > 0)
@@ -69,18 +70,27 @@ classdef Models2D
 					confB = Utils.LinDiscrimCheck(pB, 2, protoA, protoB);
 				end
 
-				if(length(confA)==0), pB = confB; end
-				if(length(confB)==0), pA = confA; end
-				if(length(confA) ~= 0 && length(confB) ~= 0), error('fails'); end;
+				% confAs = [confAs length(confA(:,1))];
+				% confBs = [confBs length(confB(:,1))];
 
 				hold on;
 				tempCont = Utils.MEDClassifier('k', xVals, yVals, testPts, cont,...
-					protoA, protoB);
+					false, protoA, protoB);
 
-				[vs,ind] = max([tempCont(:) seqContour(:)], [], 2);
+				vs = []; mod = 0;
+				if(length(confA)==0),
+					mod = 2; 
+					pB = confB; 
+				end
+				if(length(confB)==0),
+					mod = 1;
+					pA = confA; 
+				end
+				if(length(confA) ~= 0 && length(confB) ~= 0), error('fails'); end;
 
-            	seqContour = reshape(vs, length(yVals), length(xVals));
+				seqContour = ((seqContour==0).*((tempCont == mod).*mod)) + seqContour;
 
+				% seqContour = reshape(vs, length(yVals), length(xVals));
 			end
 			[c, h] = contour(xVals, yVals, seqContour, 3, 'b');
 		end
