@@ -196,7 +196,7 @@ classdef Utils
             
             finCont = cont';
             if(plotFlag)
-                [c, h] = contour(xVals,yVals, cont', 1, colour);
+                [c, h] = contour(xVals,yVals, cont', 2, colour);
             end
             %ch = get(h,'child'); alpha(ch,0.05);
             

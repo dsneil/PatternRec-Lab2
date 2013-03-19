@@ -75,18 +75,24 @@ classdef Models2D
 
 				hold on;
 				tempCont = Utils.MEDClassifier('--k', xVals, yVals, testPts, cont,...
-					true, protoA, protoB);
+					false, protoA, protoB);
 
 				vs = []; mod = 0;
-				if(length(confA)==0),
+				if(length(confA) == 0 && length(confB) == 0),
+					vs = tempCont;
+					pA = confA
+					pB = confB;
+				elseif(length(confA)==0),
 					mod = 2; 
+					vs = (tempCont == mod).*mod;
 					pB = confB; 
-				end
-				if(length(confB)==0),
+				elseif(length(confB)==0),
 					mod = 1;
-					pA = confA; 
+					vs = (tempCont == mod).*mod;
+					pA = confA;
+				else(length(confA) ~= 0 && length(confB) ~= 0), 
+					error('fails'); 
 				end
-				if(length(confA) ~= 0 && length(confB) ~= 0), error('fails'); end;
 
 				% Where all the magic happens:
 				%	- Finds all locations in current contour that are 0
@@ -94,7 +100,7 @@ classdef Models2D
 				%	- Multiplies these together to create a composite contour of
 				%	  where our new contour can "fit" in our current contour
 				%	- "copies" composite map into our current map.
-				seqContour = ((seqContour==0).*((tempCont == mod).*mod)) + seqContour;
+				seqContour = ((seqContour==0).*(vs)) + seqContour;
 			end
 			[c, h] = contour(xVals, yVals, seqContour, 3, 'b');
 		end
