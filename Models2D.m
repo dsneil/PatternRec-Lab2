@@ -74,8 +74,8 @@ classdef Models2D
 				% confBs = [confBs length(confB(:,1))];
 
 				hold on;
-				tempCont = Utils.MEDClassifier('k', xVals, yVals, testPts, cont,...
-					false, protoA, protoB);
+				tempCont = Utils.MEDClassifier('--k', xVals, yVals, testPts, cont,...
+					true, protoA, protoB);
 
 				vs = []; mod = 0;
 				if(length(confA)==0),
@@ -88,9 +88,13 @@ classdef Models2D
 				end
 				if(length(confA) ~= 0 && length(confB) ~= 0), error('fails'); end;
 
+				% Where all the magic happens:
+				%	- Finds all locations in current contour that are 0
+				%	- Finds all location in new contour that match our modifier (class)
+				%	- Multiplies these together to create a composite contour of
+				%	  where our new contour can "fit" in our current contour
+				%	- "copies" composite map into our current map.
 				seqContour = ((seqContour==0).*((tempCont == mod).*mod)) + seqContour;
-
-				% seqContour = reshape(vs, length(yVals), length(xVals));
 			end
 			[c, h] = contour(xVals, yVals, seqContour, 3, 'b');
 		end
