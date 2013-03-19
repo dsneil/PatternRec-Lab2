@@ -25,17 +25,15 @@ classdef Models2D
 		function [ind, cont, pdfs, xVs] = parzen2Est(stepSize, windSize, windVar, varargin)
 			% Calculates the gaussian parzen window PDF for a given data set
 			% --
-			% data = data set
-			% sigma = standard deviation of parzen window
-			% res = resolution (step size of evaluation)
-			% buff = buffer on either side of data set. used in creating
-			% 	 evaluation set
+			% stepSize = resolution of contour for decision boundary
+			% windSize = size of gaussian matrix to create [windSize x windSize]
+			% windVar = variance of window function
+			% varargin = list of classes for evaluation
 
 			[xVals, yVals, ~, ~] = Utils.createGrid(stepSize, varargin{:});
 			xmin = min(xVals); xmax = max(xVals); ymin = min(yVals); ymax = max(yVals);
 			resVec = [stepSize xmin ymin xmax ymax];
 
-			% creates a 50x50 gaussian window with variance 400 
 			%fspecial('gaussian', [50 50], sqrt(400));
 			gaussWindow = fspecial('gaussian', [windSize windSize], sqrt(windVar));
 			% gaussWindow = Utils.gaussian2d(100, 5, 400);
@@ -52,10 +50,16 @@ classdef Models2D
 		end
 
 		function seqContour = seqClassifier(stepSize, cA, cB)
+			% Classifies two labelled clusters with sequential linear discriminants.
+			% TODO: Return error rates.
+			% --
+			% stepSize = resolution of contour for decision boundary
+			% cA, cB = list of classes for evaluation
+
 			[xVals, yVals, testPts, cont] = Utils.createGrid(stepSize, cA, cB);
 
 			pA = cA.Cluster; pB = cB.Cluster; protoA = []; protoB = [];
-			confAs = []; confBs = [];
+			confAs = []; confBs = []; % TODO: error rates
 			seqContour = zeros(length(yVals), length(xVals));
 			iter = 0;
 
@@ -77,29 +81,27 @@ classdef Models2D
 				tempCont = Utils.MEDClassifier('--k', xVals, yVals, testPts, cont,...
 					false, protoA, protoB);
 
-				vs = []; mod = 0;
+				vs = [];
 				if(length(confA) == 0 && length(confB) == 0),
 					vs = tempCont;
-					pA = confA
-					pB = confB;
+					pA = confA; pB = confB;
 				elseif(length(confA)==0),
-					mod = 2; 
+					mod = 2;
 					vs = (tempCont == mod).*mod;
-					pB = confB; 
+					pB = confB;
 				elseif(length(confB)==0),
 					mod = 1;
 					vs = (tempCont == mod).*mod;
 					pA = confA;
 				else(length(confA) ~= 0 && length(confB) ~= 0), 
-					error('fails'); 
+					error('failed.'); 
 				end
 
-				% Where all the magic happens:
-				%	- Finds all locations in current contour that are 0
-				%	- Finds all location in new contour that match our modifier (class)
-				%	- Multiplies these together to create a composite contour of
-				%	  where our new contour can "fit" in our current contour
-				%	- "copies" composite map into our current map.
+				% - Finds all locations in current contour that are 0
+				% - Finds all location in new contour that match our modifier (class)
+				% - Multiplies these together to create a composite contour of
+				%	where our new contour can "fit" in our current contour
+				% - "copies" composite map into our current map.
 				seqContour = ((seqContour==0).*(vs)) + seqContour;
 			end
 			[c, h] = contour(xVals, yVals, seqContour, 3, 'b');
