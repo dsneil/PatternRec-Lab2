@@ -42,9 +42,9 @@ classdef Models2D
 			pdfs = []; xVs = []; yVs = [];
 			for k=1:length(varargin)
 				[p,xVs,yVs] = parzen2(varargin{k}.Cluster, resVec, gaussWindow);
+				p = p';
 				pdfs = [pdfs p(:)]; % add all points as a column
 			end
-
 			[ind, cont] = Utils.parzenMLClassifier('k', xVs, yVs, pdfs);
 
 		end
@@ -79,19 +79,19 @@ classdef Models2D
 
 				hold on;
 				tempCont = Utils.MEDClassifier('--k', xVals, yVals, testPts, cont,...
-					false, protoA, protoB);
+					true, protoA, protoB);
 
-				vs = [];
+				mappingVals = [];
 				if(length(confA) == 0 && length(confB) == 0),
-					vs = tempCont;
+					mappingVals = tempCont;
 					pA = confA; pB = confB;
 				elseif(length(confA)==0),
 					mod = 2;
-					vs = (tempCont == mod).*mod;
+					mappingVals = (tempCont == mod).*mod;
 					pB = confB;
 				elseif(length(confB)==0),
 					mod = 1;
-					vs = (tempCont == mod).*mod;
+					mappingVals = (tempCont == mod).*mod;
 					pA = confA;
 				else(length(confA) ~= 0 && length(confB) ~= 0), 
 					error('failed.'); 
@@ -102,9 +102,9 @@ classdef Models2D
 				% - Multiplies these together to create a composite contour of
 				%	where our new contour can "fit" in our current contour
 				% - "copies" composite map into our current map.
-				seqContour = ((seqContour==0).*(vs)) + seqContour;
+				seqContour = ((seqContour==0).*(mappingVals)) + seqContour;
 			end
-			[c, h] = contour(xVals, yVals, seqContour, 3, 'b');
+			[c, h] = contour(xVals, yVals, seqContour, 3, '--r');
 		end
 	end
 end

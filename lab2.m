@@ -1,31 +1,31 @@
 %lab 2
 
-close all % close all open figures
-% clear all % clear all variables from memory
+% close all % close all open figures
+% % clear all % clear all variables from memory
 
 
-% %constants
-% stepSize = 5;
+% % %constants
+% % stepSize = 5;
 
-% load('lab2_1.mat');
+% % load('lab2_1.mat');
 
 
-% % instantiating all classes
-% cA = classData(a, 'r');
-% cB = classData(b, 'g');
+% % % % instantiating all classes
+% % % cA = classData(a, 'r');
+% % % cB = classData(b, 'g');
 
-% % do a bunch of stuff
+% % % % do a bunch of stuff
 
 % clear all;
 
-% stepSize = 5;
+% stepSize = 1;
 
 % load('lab2_2.mat');
 
 % % instantiating all classes
-% cA = classData(al, 'r');
+% cA = classData(al, 'b');
 % cB = classData(bl, 'g');
-% cC = classData(cl, 'b');
+% cC = classData(cl, 'r');
 
 % % learn the mean and covariance of the clusters
 % cA.Mean = Utils.learnMean(cA);
@@ -42,7 +42,9 @@ close all % close all open figures
 % hold on;
 % cont1 = Models2D.gauss2MLEst(stepSize, cA, cB, cC);
 
-% % These need to be tweaked
+% legend('Class A', 'Class B', 'Class C', 'Decision Boundary');
+
+% These need to be tweaked
 % stepSize = 5;
 % windSize = 25;
 % windVar = 400;
@@ -54,13 +56,14 @@ close all % close all open figures
 % hold on;
 % [ind, cont, pdfs, xs] = Models2D.parzen2Est(stepSize, windSize, windVar, cA, cB, cC);
 
+
 clear all;
 
-stepSize = 5;
+stepSize = 1;
 
 load('lab2_3.mat');
 
-cA = classData(a, 'r');
+cA = classData(a, 'b');
 cB = classData(b, 'g');
 
 figure;
@@ -68,4 +71,5 @@ Utils.plotClass(cA);
 Utils.plotClass(cB);
 hold on;
 sC = Models2D.seqClassifier(stepSize, cA, cB);
+legend('Class A', 'Class B', 'Discriminants', 'Decision Boundary');
 
