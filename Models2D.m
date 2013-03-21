@@ -42,7 +42,6 @@ classdef Models2D
 			pdfs = []; xVs = []; yVs = [];
 			for k=1:length(varargin)
 				[p,xVs,yVs] = parzen2(varargin{k}.Cluster, resVec, gaussWindow);
-				p = p';
 				pdfs = [pdfs p(:)]; % add all points as a column
 			end
 			[ind, cont] = Utils.parzenMLClassifier('k', xVs, yVs, pdfs);

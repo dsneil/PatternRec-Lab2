@@ -59,7 +59,7 @@
 
 clear all;
 
-stepSize = 1;
+stepSize = 5;
 
 load('lab2_3.mat');
 
