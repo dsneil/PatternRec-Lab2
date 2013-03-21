@@ -55,7 +55,7 @@ classdef Models2D
 			% stepSize = resolution of contour for decision boundary
 			% cA, cB = list of classes for evaluation
 
-			[xVals, yVals, testPts, cont] = Utils.createGrid(stepSize, cA, cB);
+			[xVals, yVals, testPts, ~] = Utils.createGrid(stepSize, cA, cB);
 
 			pA = cA.Cluster; pB = cB.Cluster; protoA = []; protoB = [];
 			confAs = []; confBs = []; % TODO: error rates
@@ -73,11 +73,8 @@ classdef Models2D
 					confB = Utils.LinDiscrimCheck(pB, 2, protoA, protoB);
 				end
 
-				% confAs = [confAs length(confA(:,1))];
-				% confBs = [confBs length(confB(:,1))];
-
 				hold on;
-				tempCont = Utils.MEDClassifier('--k', xVals, yVals, testPts, cont,...
+				tempCont = Utils.MEDClassifier('--k', xVals, yVals, testPts,...
 					true, protoA, protoB);
 
 				mappingVals = [];

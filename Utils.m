@@ -164,7 +164,7 @@ classdef Utils
             [c, h] = contour(xVals, yVals, cont, 3, colour);
         end
 
-        function finCont = MEDClassifier(colour, xVals, yVals, testPts, cont, plotFlag, varargin)
+        function finCont = MEDClassifier(colour, xVals, yVals, testPts, plotFlag, varargin)
             % Minimum Euclidian Distance classifier.
             % --
             % colour = colour of decision boundary
@@ -177,7 +177,6 @@ classdef Utils
             % varargin = set of class prototypes.
 
             dists = [];
-            % xIndex = 1; yIndex = 1; numXs = length(xVals);
 
             for s = 1:length(varargin)
                 dist = sum((bsxfun(@minus,testPts,varargin{s})).^2, 2);
@@ -186,25 +185,8 @@ classdef Utils
 
             [~,mins] = min(dists, [], 2);
             finCont = reshape(mins, length(xVals), length(yVals));
-            finCont = finCont';
+            finCont = finCont'; %transpose for laughs
 
-            % for k = 1: length(testPts(:,1))
-            %     for s = 1 : length(varargin)
-            %         dists = [ dists Utils.eucD(testPts(k,:),varargin{s})];
-            %     end
-            %     [~, minClass] = min(dists);
-            %     cont(xIndex,yIndex) = minClass;
-            %     dists = [];
-                
-            %    if(xIndex == numXs)
-            %         xIndex = 1;
-            %         yIndex = yIndex +1;
-            %     else
-            %         xIndex = xIndex +1;
-            %     end
-            % end 
-            
-            % finCont = cont';
             if(plotFlag)
                 [c, h] = contour(xVals,yVals, finCont, 1, colour);
             end
